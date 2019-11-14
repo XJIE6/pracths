@@ -5,12 +5,17 @@ module Nat where
 
 data Nat where
   Zero :: Nat
-  Succ :: Nat -> Nat
+  Succ :: Nat -> Nat deriving(Eq)
 
 
 plus :: Nat -> Nat -> Nat
 plus Zero n = n
-plus (Succ m) n = Succ (m `plus` n)
+plus (Succ m) n = m `plus` (Succ n)
+
+minus :: Nat -> Nat -> Nat
+minus Zero _ = Zero
+minus n Zero = n
+minus (Succ n) (Succ m) = minus n m
 
 toNum :: Num n => Nat -> n
 toNum = go 0

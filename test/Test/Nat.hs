@@ -36,11 +36,24 @@ hprop_toFrom = property $ do
   i === Nat.toNum n
 
 
-nat :: Gen Nat
-nat = G.just (Nat.fromIntegral <$> G.int (R.linear 0 100000))
+nat :: Range Int -> Gen Nat
+nat = G.just . (fmap Nat.fromIntegral) . G.int
 
 hprop_plus :: Property
 hprop_plus = property $ do
-  m <- forAll nat
-  n <- forAll nat
+  m <- forAll $ nat (R.linear 0 100000)
+  n <- forAll $ nat (R.linear 0 100000)
   Nat.toNum m + Nat.toNum n === (Nat.toNum (m `Nat.plus` n) :: Integer)
+
+
+hprop_minus :: Property
+hprop_minus = property $ do
+  m <- forAll $ nat (R.linear 0 100000)
+  n <- forAll $ nat (R.linear 0 100000)
+  max 0 (Nat.toNum m - Nat.toNum n) === (Nat.toNum (m `Nat.minus` n) :: Integer)
+
+hprop_plus_minus :: Property
+hprop_plus_minus = property $ do
+  n <- forAll $ nat (R.linear 0 100000)
+  m <- forAll $ nat (R.linear 0 100000)
+  n === (n `Nat.plus` m) `Nat.minus` m
